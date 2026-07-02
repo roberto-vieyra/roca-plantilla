@@ -125,8 +125,7 @@ function actualizarPDF() {
     document.getElementById('pdfCliente').textContent = cliente.value || '-';
     document.getElementById('pdfEmpresa').textContent = empresa.value || '-';
     document.getElementById('pdfProyecto').textContent = proyecto.value || '-';
-    document.getElementById("pdfClienteCargo").textContent =
-    cargo.value || "-";
+    document.getElementById("pdfClienteCargo").textContent =cargo.value || "-";
 
     document.getElementById("pdfClienteRFC").textContent = rfcCliente.value || "-";
     document.getElementById("pdfClienteCorreo").textContent = email.value || "-";
