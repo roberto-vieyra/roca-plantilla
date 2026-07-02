@@ -183,6 +183,18 @@ tr, .summary-flex, .bottom-content {
     margin:12px 0 18px auto;
 }
 
+.page-number{
+    position:absolute;
+    bottom:18px;
+    right:35px;
+
+    font-size:7pt;
+    font-weight:500;
+    color:#64748B;
+
+    font-family:'Inter', sans-serif;
+}
+
 /* =====================================
    INFORMACIÓN GENERAL (CLIENTE / PROYECTO)
 ===================================== */
@@ -205,20 +217,32 @@ tr, .summary-flex, .bottom-content {
     letter-spacing: 0.5px;
 }
 
-.info-list {
-    list-style: none;
-    font-size: 9.5pt;
+.info-list{
+    list-style:none;
+    padding:0;
+    margin:0;
 }
 
-.info-list li {
-    margin-bottom: 4px;
+.info-list li{
+    display:grid;
+    grid-template-columns:95px 1fr;
+    column-gap:12px;
+    align-items:start;
+    margin-bottom:7px;
 }
 
-.info-list strong {
-    color: var(--brand-primary);
-    font-weight: 600;
-    display: inline-block;
-    width: 90px;
+.info-list strong{
+    font-size:9pt;
+    white-space:nowrap;
+    font-weight:700;
+    color:#0F172A;
+}
+
+.info-list span{
+    font-size:9pt;
+    line-height:1.45;
+    color:#475569;
+    word-break:break-word;
 }
 
 /* =====================================
@@ -571,3 +595,25 @@ tr, .summary-flex, .bottom-content {
     letter-spacing:0.25px;
 }
 
+.license-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border:1px solid #D4AF37;
+    border-radius:20px;
+    font-size:6pt;
+    color:#D4AF37;
+    margin-top:6px;
+}
+
+.page-number{
+    position:absolute;
+    bottom:20px;
+    right:35px;
+
+    font-family:'Inter', sans-serif;
+    font-size:7pt;
+    font-weight:500;
+
+    color:#64748B;
+    letter-spacing:0.5px;
+}

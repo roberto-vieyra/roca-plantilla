@@ -202,16 +202,14 @@ function actualizarTablaPDF() {
 function obtenerCategoria(descripcion) {
     descripcion = descripcion.toLowerCase();
 
-    if(descripcion.includes("yeso")) return "Acabados y Yeso";
+    if(descripcion.includes("yeso")) return "Albañilería y Acabados";
     if(descripcion.includes("pintura")) return "Pintura";
     if(descripcion.includes("carpinter")) return "Carpintería";
     if(descripcion.includes("impermeabil")) return "Impermeabilización";
     if(descripcion.includes("ventana") || descripcion.includes("aluminio")) return "Cancelería y Ventanas";
     if(descripcion.includes("piso")) return "Pisos y Recubrimientos";
-    if(descripcion.includes("responsiva")) return "Servicios Profesionales";
-    if(descripcion.includes("licencia")) return "Gestiones y Trámites";
-
-    return "Trabajos Diversos";
+    if(descripcion.includes("responsiva"))return "Servicios Profesionales y Trámites";
+    if(descripcion.includes("licencia"))return "Servicios Profesionales y Trámites";return "Trabajos complementarios";
 }
 
 // ======================================
@@ -222,6 +220,7 @@ function actualizarTotalesPDF() {
     document.getElementById('pdfSubtotal').textContent = document.getElementById('subtotal').textContent;
     document.getElementById('pdfIVA').textContent = document.getElementById('iva').textContent;
     document.getElementById('pdfTotal').textContent = document.getElementById('total').textContent;
+
 }
 
 // ======================================
@@ -253,6 +252,9 @@ function generarFolio() {
     const folio = `ROCA-${year}-${String(consecutivo).padStart(3, "0")}`;
     
     document.getElementById("pdfFolio").textContent = folio;
+    document.getElementById("pdfFolioAnexo").textContent = folio;
+    document.getElementById("pageNumber1").textContent =`${folio} · Página 1 de 2`;
+    document.getElementById("pageNumber2").textContent =`${folio} · Página 2 de 2`;
 }
 
 function guardarSiguienteFolio() {
@@ -277,6 +279,8 @@ async function descargarPDF() {
     const folio =
         document.getElementById("pdfFolio")
         .textContent;
+
+        
 
     const paginas = [
         document.getElementById("executiveProposal"),
