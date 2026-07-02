@@ -1,0 +1,301 @@
+// ======================================
+// ELEMENTOS PRINCIPALES
+// ======================================
+
+const bodyTable = document.getElementById('bodyTable');
+const addRow = document.getElementById('addRow');
+const btnDescargar = document.getElementById("btnDescargar");
+const btnNuevoFolio = document.getElementById("nuevoFolio");
+
+const cliente = document.getElementById("cliente");
+const empresa = document.getElementById("empresa");
+const proyecto = document.getElementById("proyecto");
+const fecha = document.getElementById("fecha");
+
+// ======================================
+// EVENTOS DEL FORMULARIO
+// ======================================
+
+cliente.addEventListener("input", actualizarPDF);
+empresa.addEventListener("input", actualizarPDF);
+proyecto.addEventListener("input", actualizarPDF);
+fecha.addEventListener("input", actualizarPDF);
+
+addRow.addEventListener('click', agregarFila);
+btnDescargar.addEventListener("click", descargarPDF);
+
+// CORRECCIÓN: Este evento debe asignarse una sola vez, no dentro de actualizarPDF()
+btnNuevoFolio.addEventListener("click", () => {
+    guardarSiguienteFolio();
+    generarFolio();
+});
+
+// ======================================
+// AGREGAR FILA
+// ======================================
+
+function agregarFila() {
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td><input type="number" class="cantidad" value="1" min="0"></td>
+        <td><input type="text" class="unidad" placeholder="Servicio"></td>
+        <td><input type="text" class="descripcion" placeholder="Descripción"></td>
+        <td><input type="number" class="precio" value="0" min="0" step="0.01"></td>
+        <td class="importe">$0.00</td>
+        <td><button class="eliminar btn-delete">X</button></td>
+    `;
+
+    bodyTable.appendChild(row);
+
+    // Asignar eventos a los nuevos inputs de la fila
+    row.querySelector('.cantidad').addEventListener('input', calcular);
+    row.querySelector('.precio').addEventListener('input', calcular);
+    row.querySelector('.unidad').addEventListener('input', actualizarTablaPDF);
+    row.querySelector('.descripcion').addEventListener('input', actualizarTablaPDF);
+    
+    row.querySelector('.eliminar').addEventListener('click', () => {
+        row.remove();
+        calcular();
+    });
+
+    calcular();
+}
+
+// ======================================
+// CALCULAR TOTALES
+// ======================================
+
+function calcular() {
+    let subtotal = 0;
+    const filas = document.querySelectorAll('#bodyTable tr');
+
+    filas.forEach(fila => {
+        const cantidad = parseFloat(fila.querySelector('.cantidad').value) || 0;
+        const precio = parseFloat(fila.querySelector('.precio').value) || 0;
+        const importe = cantidad * precio;
+
+        fila.querySelector('.importe').innerText = formatoMoneda(importe);
+        subtotal += importe;
+    });
+
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+
+    document.getElementById('subtotal').innerText = formatoMoneda(subtotal);
+    document.getElementById('iva').innerText = formatoMoneda(iva);
+    document.getElementById('total').innerText = formatoMoneda(total);
+
+    actualizarTablaPDF();
+    actualizarTotalesPDF();
+}
+
+// ======================================
+// ACTUALIZAR DATOS GENERALES DEL PDF
+// ======================================
+
+function actualizarPDF() {
+    document.getElementById('pdfCliente').textContent = cliente.value || '-';
+    document.getElementById('pdfEmpresa').textContent = empresa.value || '-';
+    document.getElementById('pdfProyecto').textContent = proyecto.value || '-';
+
+    if (fecha.value) {
+        const f = new Date(fecha.value);
+        // Ajuste para evitar desfase de zona horaria al crear el Date
+        f.setMinutes(f.getMinutes() + f.getTimezoneOffset());
+        
+        document.getElementById('pdfFecha').textContent = f.toLocaleDateString('es-MX', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    } else {
+        document.getElementById('pdfFecha').textContent = '-';
+    }
+}
+
+// ======================================
+// ACTUALIZAR TABLAS DEL PDF (RESUMEN Y ANEXO)
+// ======================================
+
+function actualizarTablaPDF() {
+    const resumen = document.getElementById("pdfResumenPartidas");
+    const anexo = document.getElementById("pdfAnexoConceptos");
+
+    resumen.innerHTML = "";
+    anexo.innerHTML = "";
+
+    const partidas = {};
+    const filas = document.querySelectorAll("#bodyTable tr");
+
+    filas.forEach(fila => {
+        const cantidad = parseFloat(fila.querySelector(".cantidad").value) || 0;
+        const unidad = fila.querySelector(".unidad").value || "-";
+        const descripcion = fila.querySelector(".descripcion").value || "-";
+        const precio = parseFloat(fila.querySelector(".precio").value) || 0;
+        const importe = cantidad * precio;
+
+        // Anexo Técnico
+        anexo.innerHTML += `
+            <tr>
+                <td class="align-center">${cantidad}</td>
+                <td class="align-center">${unidad}</td>
+                <td>${descripcion}</td>
+                <td class="align-right">${formatoMoneda(precio)}</td>
+                <td class="align-right">${formatoMoneda(importe)}</td>
+            </tr>
+        `;
+
+        // Agrupación para Resumen Ejecutivo
+        let categoria = obtenerCategoria(descripcion);
+        partidas[categoria] = (partidas[categoria] || 0) + importe;
+    });
+
+    // Imprimir Resumen Ejecutivo
+    for (let categoria in partidas) {
+        resumen.innerHTML += `
+            <tr>
+                <td class="item-desc">${categoria}</td>
+                <td class="align-right">${formatoMoneda(partidas[categoria])}</td>
+            </tr>
+        `;
+    }
+}
+
+function obtenerCategoria(descripcion) {
+    descripcion = descripcion.toLowerCase();
+
+    if(descripcion.includes("yeso")) return "Acabados y Yeso";
+    if(descripcion.includes("pintura")) return "Pintura";
+    if(descripcion.includes("carpinter")) return "Carpintería";
+    if(descripcion.includes("impermeabil")) return "Impermeabilización";
+    if(descripcion.includes("ventana") || descripcion.includes("aluminio")) return "Cancelería y Ventanas";
+    if(descripcion.includes("piso")) return "Pisos y Recubrimientos";
+    if(descripcion.includes("responsiva")) return "Servicios Profesionales";
+    if(descripcion.includes("licencia")) return "Gestiones y Trámites";
+
+    return "Trabajos Diversos";
+}
+
+// ======================================
+// ACTUALIZAR TOTALES DEL PDF
+// ======================================
+
+function actualizarTotalesPDF() {
+    document.getElementById('pdfSubtotal').textContent = document.getElementById('subtotal').textContent;
+    document.getElementById('pdfIVA').textContent = document.getElementById('iva').textContent;
+    document.getElementById('pdfTotal').textContent = document.getElementById('total').textContent;
+}
+
+// ======================================
+// FORMATEAR MONEDA
+// ======================================
+
+function formatoMoneda(numero) {
+    return numero.toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+    });
+}
+
+// ======================================
+// GESTIÓN DE FOLIOS
+// ======================================
+
+function generarFolio() {
+    const year = new Date().getFullYear();
+    const yearGuardado = localStorage.getItem("rocaYear");
+
+    // Si cambiamos de año, reiniciamos el consecutivo
+    if(yearGuardado != year) {
+        localStorage.setItem("rocaYear", year);
+        localStorage.setItem("rocaConsecutivo", 1);
+    }
+
+    let consecutivo = parseInt(localStorage.getItem("rocaConsecutivo")) || 1;
+    const folio = `ROCA-${year}-${String(consecutivo).padStart(3, "0")}`;
+    
+    document.getElementById("pdfFolio").textContent = folio;
+}
+
+function guardarSiguienteFolio() {
+    let consecutivo = parseInt(localStorage.getItem("rocaConsecutivo")) || 1;
+    consecutivo++;
+    localStorage.setItem("rocaConsecutivo", consecutivo);
+}
+
+// Función auxiliar en caso de que necesites resetear el contador desde consola
+function resetFolios() {
+    localStorage.removeItem("rocaConsecutivo");
+    localStorage.removeItem("rocaYear");
+    generarFolio();
+}
+
+// ======================================
+// DESCARGAR PDF
+// ======================================
+
+function descargarPDF() {
+    // CORRECCIÓN: Seleccionamos el documento A4, no el panel de vista previa entero.
+    const elemento = document.querySelector(".document-a4"); 
+    const folio = document.getElementById("pdfFolio").textContent;
+
+    const opciones = {
+        margin: 0,
+        filename: `${folio}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { 
+            scale: 2, // 2 es suficiente para excelente calidad y menor peso
+            useCORS: true,
+            scrollY: 0
+        },
+        pagebreak: { mode: ["css", "legacy"] },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    };
+
+    html2pdf().set(opciones).from(elemento).save();
+}
+
+// ======================================
+// CARGAR DATOS DEMO
+// ======================================
+
+function cargarConceptosDemo() {
+    const conceptos = [
+        { descripcion: `YES-0001 - Corrección, resane y afinado de muros.`, unidad: "M2", cantidad: 1150, precio: 160 },
+        { descripcion: `YES-0002 - Aplicación de yeso en boquilla.`, unidad: "ML", cantidad: 60, precio: 80 },
+        { descripcion: `Suministro y aplicación de estuco en muro exterior.`, unidad: "M2", cantidad: 544, precio: 95 },
+        { descripcion: `Pintura acrílica interior Berh Premium Plus.`, unidad: "PZA", cantidad: 9, precio: 3399 },
+        { descripcion: `Aplicación de pintura acrílica interior a dos manos.`, unidad: "M2", cantidad: 1150, precio: 30 },
+        { descripcion: `Pintura acrílica exterior Berh Premium Plus.`, unidad: "PZA", cantidad: 6, precio: 3599 },
+        { descripcion: `Aplicación de pintura acrílica exterior a dos manos.`, unidad: "M2", cantidad: 544, precio: 30 },
+        { descripcion: `Carpintería: cocina integral, puertas, muebles.`, unidad: "LOTE", cantidad: 1, precio: 590000 },
+        { descripcion: `Sistema de impermeabilización acrílico Fester 8 años.`, unidad: "LOTE", cantidad: 1, precio: 35235 },
+        { descripcion: `Suministro de ventanas de aluminio.`, unidad: "LOTE", cantidad: 1, precio: 40000 },
+        { descripcion: `Piso de ingeniería para terraza nivel 1.`, unidad: "M2", cantidad: 18, precio: 3500 },
+        { descripcion: `Trabajos diversos de terminación de obra.`, unidad: "LOTE", cantidad: 1, precio: 55000 },
+        { descripcion: `Servicios de responsiva de director responsable.`, unidad: "SERVICIO", cantidad: 1, precio: 36000 },
+        { descripcion: `Gestión y actualización de licencia de construcción.`, unidad: "SERVICIO", cantidad: 1, precio: 45000 }
+    ];
+
+    bodyTable.innerHTML = "";
+
+    conceptos.forEach(item => {
+        agregarFila();
+        const ultimaFila = bodyTable.lastElementChild;
+        ultimaFila.querySelector(".cantidad").value = item.cantidad;
+        ultimaFila.querySelector(".unidad").value = item.unidad;
+        ultimaFila.querySelector(".descripcion").value = item.descripcion;
+        ultimaFila.querySelector(".precio").value = item.precio;
+    });
+
+    calcular();
+}
+
+// ======================================
+// INICIALIZACIÓN
+// ======================================
+
+generarFolio();
+actualizarPDF();
+cargarConceptosDemo(); // Esta función ya llama a calcular() y actualizarTablaPDF()

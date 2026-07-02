@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROCA Quote Generator</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pdf.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- ===================================== -->
+    <!-- PANEL IZQUIERDO -->
+    <!-- ===================================== -->
+
+    <aside class="editor-panel">
+
+        <div class="header">
+            <h1>ROCA</h1>
+            <p>Generador de Cotizaciones</p>
+        </div>
+
+        <div class="card">
+
+            <h2>Información del Cliente</h2>
+
+            <div class="grid">
+
+                <div>
+                    <label>Cliente</label>
+                    <input type="text" id="cliente">
+                </div>
+
+                <div>
+                    <label>Empresa</label>
+                    <input type="text" id="empresa">
+                </div>
+
+                <div>
+                    <label>Proyecto</label>
+                    <input type="text" id="proyecto">
+                </div>
+
+                <div>
+                    <label>Fecha</label>
+                    <input type="date" id="fecha">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Conceptos</h2>
+
+            <button id="addRow">
+                + Agregar Concepto
+            </button>
+
+            <table id="tabla">
+
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Descripción</th>
+                        <th>P.U.</th>
+                        <th>Importe</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody id="bodyTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="card total-card">
+
+            <h2>Resumen</h2>
+
+            <div class="totales">
+                <span>Subtotal:</span>
+                <span id="subtotal">$0.00</span>
+            </div>
+
+            <div class="totales">
+                <span>IVA:</span>
+                <span id="iva">$0.00</span>
+            </div>
+
+            <div class="totales total">
+                <span>Total:</span>
+                <span id="total">$0.00</span>
+            </div>
+
+        </div>
+
+        <button id="nuevoFolio">
+         Generar Nuevo Folio
+        </button>
+
+        <div class="actions">
+
+    <button id="btnDescargar">
+        📄 Descargar PDF
+    </button>
+
+</div>
+
+    </aside>
+
+    <!-- ===================================== -->
+    <!-- PANEL DERECHO -->
+    <!-- ===================================== -->
+
+    <main class="preview-panel">
+
+        <div class="document-a4" 
+        id="executiveProposal">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+
+    <header class="doc-header">
+
+        <div class="brand-block">
+
+    <div class="brand-logo-area">
+
+        <img
+            src="assets/roca-isotipo-dark.png"
+            class="pdf-isotipo"
+            alt="ROCA"
+        >
+
+        <div class="logo">
+            ROCA
+        </div>
+
+        <div class="tagline">
+            CONSTRUCTORA Y OPERADORA
+        </div>
+
+    </div>
+
+    <div class="company-details">
+    P.º del Río 417 · Paseos de Taxqueña · CDMX 04250<br>
+    RFC: COR101020HM8 · Tel. +52 442 332 8566<br>
+    recepcion.roca.gr@gmail.com
+    </div>
+
+</div>
+
+        <div class="meta-block">
+
+    <div class="doc-type">
+        COTIZACIÓN
+    </div>
+
+    <div class="document-meta">
+
+        <div class="meta-row">
+            <span>FOLIO</span>
+            <strong id="pdfFolio">
+                ROCA-2026-001
+            </strong>
+        </div>
+
+        <div class="meta-row">
+            <span>FECHA</span>
+            <strong id="pdfFecha">
+                -
+            </strong>
+        </div>
+
+        <div class="meta-row">
+            <span>VIGENCIA</span>
+            <strong>
+                30 DÍAS NATURALES
+            </strong>
+        </div>
+
+        <div class="meta-row">
+            <span>MONEDA</span>
+            <strong>
+                MXN
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+
+    </header>
+
+    <!-- ========================= -->
+    <!-- CLIENTE -->
+    <!-- ========================= -->
+
+    <section class="info-grid">
+
+        <div class="info-section">
+
+            <h3>
+                Preparado Para
+            </h3>
+
+            <ul class="info-list">
+
+                <li>
+                    <strong>Empresa:</strong>
+                    <span id="pdfEmpresa">
+                        -
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Atención:</strong>
+                    <span id="pdfCliente">
+                        -
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Email:</strong>
+                    <span id="pdfClienteCorreo">
+                        -
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Teléfono:</strong>
+                    <span id="pdfClienteTelefono">
+                        -
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Dirección:</strong>
+                    <span id="pdfClienteDireccion">
+                        -
+                    </span>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- PROYECTO -->
+        <!-- ========================= -->
+
+        <div class="info-section">
+
+            <h3>
+                Detalles del Proyecto
+            </h3>
+
+            <ul class="info-list">
+
+                <li>
+                    <strong>Proyecto:</strong>
+                    <span id="pdfProyecto">
+                        -
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Servicio:</strong>
+                    Presupuesto Ejecutivo y Supervisión
+                </li>
+
+                <li>
+                    <strong>Ubicación:</strong>
+                    <span id="pdfUbicacion">
+                        Ciudad de México
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Duración:</strong>
+                    <span id="pdfDuracion">
+                        10 días hábiles
+                    </span>
+                </li>
+
+                <li>
+                    <strong>Responsable:</strong>
+                    Ing. Roberto Vieyra Sánchez
+                </li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+<h3 class="executive-title">
+    Resumen Económico
+</h3>
+
+<table class="executive-table">
+
+    <thead>
+
+        <tr>
+            <th>Concepto</th>
+            <th>Importe</th>
+        </tr>
+
+    </thead>
+
+    <tbody id="pdfResumenPartidas"></tbody>
+
+</table>
+
+    <!-- ========================= -->
+    <!-- TOTALES -->
+    <!-- ========================= -->
+
+    <section class="summary-flex">
+
+        <div class="payment-info">
+
+            <h4>
+                Instrucciones de Pago
+            </h4>
+
+            Beneficiario:<br>
+            ROCA Constructora y Operadora<br><br>
+
+            Banco:
+            Cuenta de Cheques<br>
+
+            Cuenta:
+            0124719360<br>
+
+            CLABE:
+            012680001247193608<br><br>
+
+            Banco Alternativo:
+            HEY Banco<br>
+
+            Cuenta:
+            940091230014<br>
+
+            CLABE:
+            167680000790774660
+
+        </div>
+
+        <div class="totals-box">
+
+            <div class="total-line">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <span id="pdfSubtotal">
+                    $0.00
+                </span>
+
+            </div>
+
+            <div class="total-line">
+
+                <span>
+                    IVA (16%)
+                </span>
+
+                <span id="pdfIVA">
+                    $0.00
+                </span>
+
+            </div>
+
+            <div class="total-line grand-total">
+
+                <span>
+                    Total
+                </span>
+
+                <span id="pdfTotal">
+                    $0.00
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
+    <div class="bottom-content">
+
+        <div class="terms-grid">
+
+            <div class="terms">
+
+                <h4>
+                    Condiciones Comerciales
+                </h4>
+
+                <ul>
+
+                    <li>
+                        Vigencia de la propuesta:
+                        30 días naturales.
+                    </li>
+
+                    <li>
+                        Forma de pago:
+                        50% anticipo y
+                        50% contra entrega.
+                    </li>
+
+                    <li>
+                        Los precios no incluyen
+                        conceptos extraordinarios
+                        no especificados.
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="signature-box">
+
+                <div class="signature-line">
+
+                    <div class="name">
+                        Ing. Roberto Vieyra Sánchez
+                    </div>
+
+                    <div class="title">
+                        Director General
+                    </div>
+
+                    <div class="title">
+                        ROCA Constructora y Operadora
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer class="legal-footer">
+
+            Este documento es confidencial y
+            propiedad de ROCA Constructora y
+            Operadora.
+
+            P.º del Río 417,
+            Paseos de Taxqueña,
+            Ciudad de México, CDMX.
+
+            Tel:
+            +52 442 332 8566 ·
+            recepcion.roca.gr@gmail.com
+
+        </footer>
+
+    </div>
+</div>
+<div class="document-a4"
+     id="technicalAnnex">
+
+        <div class="annex-header">
+
+    <div>
+        <div class="annex-title">
+            ANEXO TÉCNICO
+        </div>
+        <div class="annex-brand-line"></div>
+
+        <div class="annex-subtitle">
+            Especificación de conceptos y alcances
+        </div>
+    </div>
+
+    <div class="annex-meta">
+        <span>Folio</span>
+        <strong id="pdfFolioAnexo">
+            ROCA-2026-001
+        </strong>
+    </div>
+
+</div>
+
+        <table class="annex-table">
+
+            <thead>
+
+                <tr>
+
+                    <th width="10%">
+                        Cant
+                    </th>
+
+                    <th width="15%">
+                        Unidad
+                    </th>
+
+                    <th width="40%">
+                        Descripción
+                    </th>
+
+                    <th width="15%">
+                        P.U.
+                    </th>
+
+                    <th width="20%">
+                        Importe
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="pdfAnexoConceptos">
+
+            </tbody>
+
+        </table>
+
+    <div class="annex-footer">
+
+    <p>
+        El presente Anexo Técnico forma parte integral de esta cotización y deberá interpretarse conjuntamente con ella.
+    </p>
+
+    <p>
+        Los alcances, cantidades y condiciones aquí descritos estarán sujetos a validación en sitio previo al inicio de los trabajos.
+    </p>
+
+    <div class="annex-footer-signature">
+       
+
+    
+    </div>
+
+</div>
+
+</main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

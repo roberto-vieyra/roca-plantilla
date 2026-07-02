@@ -1,0 +1,280 @@
+/* =====================================
+   RESET Y VARIABLES
+===================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #e2e8f0;
+    font-family: 'Inter', Arial, sans-serif; 
+    overflow: hidden; /* Evita scroll general, lo manejaremos independiente en cada panel */
+}
+
+/* =====================================
+   LAYOUT GENERAL
+===================================== */
+.app-layout {
+    display: grid;
+    /* Reducimos a 450px para dar más espacio visual al PDF de 900px */
+    grid-template-columns: 750px 1fr;
+    height: 100vh;
+}
+
+/* =====================================
+   PANEL IZQUIERDO (EDITOR)
+===================================== */
+.editor-panel {
+    background: #f4f5f7;
+    padding: 40px 30px;
+    overflow-y: auto;
+    height: 100vh;
+    border-right: 1px solid #cbd5e1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =====================================
+   PANEL DERECHO (VISTA PREVIA)
+===================================== */
+.preview-panel {
+    background: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 40px;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+/* =====================================
+   ENCABEZADO DEL EDITOR
+===================================== */
+.header {
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-family: 'Montserrat', sans-serif;
+    color: #0F172A; /* Azul primario ROCA */
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* =====================================
+   TARJETAS DEL FORMULARIO
+===================================== */
+.card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #0f172a;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 10px;
+}
+
+/* =====================================
+   GRID E INPUTS (SCOPED AL EDITOR)
+===================================== */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.editor-panel label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.editor-panel input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.editor-panel input:focus {
+    outline: none;
+    border-color: #0F172A;
+}
+
+/* =====================================
+   TABLAS DEL EDITOR
+===================================== */
+.editor-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.editor-panel th {
+    background: #0F172A;
+    color: #ffffff;
+    padding: 12px 10px;
+    font-size: 13px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.editor-panel td {
+    padding: 10px 5px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.editor-panel td input {
+    min-width: 70px;
+}
+
+.descripcion {
+    min-width: 150px;
+}
+
+/* =====================================
+   BOTONES
+===================================== */
+.editor-panel button {
+    background: #0F172A;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-family: 'Inter', sans-serif;
+}
+
+.editor-panel button:hover {
+    background: #1e293b;
+}
+
+.editor-panel button:active {
+    transform: scale(0.98);
+}
+
+#addRow {
+    margin-bottom: 10px;
+    background: #f8fafc;
+    color: #0F172A;
+    border: 1px dashed #94a3b8;
+    width: 100%;
+    text-align: center;
+}
+
+#addRow:hover {
+    background: #f1f5f9;
+    border-color: #0F172A;
+}
+
+.btn-delete {
+    background: #ef4444 !important;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.btn-delete:hover {
+    background: #dc2626 !important;
+}
+
+/* =====================================
+   TARJETA DE TOTALES
+===================================== */
+.total-card {
+    margin-top: auto;
+}
+
+.totales {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #475569;
+}
+
+.total {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0F172A;
+    border-top: 2px solid #e2e8f0;
+    padding-top: 12px;
+    margin-top: 5px;
+}
+
+/* =====================================
+   ACCIONES INFERIORES
+===================================== */
+#nuevoFolio {
+    width: 100%;
+    background: #f1f5f9;
+    color: #475569;
+    margin-bottom: 15px;
+}
+
+#nuevoFolio:hover {
+    background: #e2e8f0;
+}
+
+.actions {
+    margin-top: 10px;
+}
+
+#btnDescargar {
+    width: 100%;
+    background: #B48E4B; /* Acento dorado ROCA */
+    padding: 16px;
+    font-size: 16px;
+}
+
+#btnDescargar:hover {
+    background: #9a783c;
+}
+
+/* =====================================
+   SCROLLBARS PERSONALIZADOS
+===================================== */
+.editor-panel::-webkit-scrollbar,
+.preview-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor-panel::-webkit-scrollbar-track,
+.preview-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.editor-panel::-webkit-scrollbar-thumb,
+.preview-panel::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 10px;
+}
+
+.editor-panel::-webkit-scrollbar-thumb:hover,
+.preview-panel::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
