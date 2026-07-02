@@ -327,6 +327,35 @@ async function descargarPDF() {
             width,
             height
         );
+
+        // ← AQUÍ VA EL NÚMERO DE PÁGINA
+pdf.setFont("helvetica", "normal");
+pdf.setFontSize(8);
+pdf.setTextColor(120);
+
+pdf.setFont("helvetica", "normal");
+pdf.setFontSize(7);
+pdf.setTextColor(130);
+
+if (i === 0) {
+    pdf.text(
+        `Página 1 de ${paginas.length}`,
+        200,
+        294,
+        {
+            align: "right"
+        }
+    );
+} else {
+    pdf.text(
+        `${folio} · Página ${i + 1} de ${paginas.length}`,
+        200,
+        294,
+        {
+            align: "right"
+        }
+    );
+}
     }
 
     pdf.save(`${folio}.pdf`);
@@ -351,7 +380,7 @@ function cargarConceptosDemo() {
         { descripcion: `Piso de ingeniería para terraza nivel 1.`, unidad: "M2", cantidad: 18, precio: 3500 },
         { descripcion: `Trabajos diversos de terminación de obra.`, unidad: "LOTE", cantidad: 1, precio: 55000 },
         { descripcion: `Servicios de responsiva de director responsable.`, unidad: "SERVICIO", cantidad: 1, precio: 36000 },
-        { descripcion: `Gestión y actualización de licencia de construcción.`, unidad: "SERVICIO", cantidad: 1, precio: 45000 }
+        { descripcion: `Gestión, actualización y regularización de licencia de construcción, incluyendo derechos y pagos municipales correspondientes.`, unidad: "SERVICIO", cantidad: 1, precio: 45000 }
     ];
 
     bodyTable.innerHTML = "";
