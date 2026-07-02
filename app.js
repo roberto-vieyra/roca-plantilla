@@ -12,6 +12,17 @@ const empresa = document.getElementById("empresa");
 const proyecto = document.getElementById("proyecto");
 const fecha = document.getElementById("fecha");
 
+const cargo = document.getElementById("cargo");
+const rfcCliente = document.getElementById("rfcCliente");
+const email = document.getElementById("email");
+const telefono = document.getElementById("telefono");
+const direccion = document.getElementById("direccion");
+
+const servicio = document.getElementById("servicio");
+const ubicacion =document.getElementById("ubicacion");
+const duracion = document.getElementById("duracion");
+const responsable = document.getElementById("responsable");
+
 // ======================================
 // EVENTOS DEL FORMULARIO
 // ======================================
@@ -20,7 +31,23 @@ cliente.addEventListener("input", actualizarPDF);
 empresa.addEventListener("input", actualizarPDF);
 proyecto.addEventListener("input", actualizarPDF);
 fecha.addEventListener("input", actualizarPDF);
+cargo.addEventListener("input", actualizarPDF);
+rfcCliente.addEventListener("input", actualizarPDF);
+email.addEventListener("input", actualizarPDF);
+telefono.addEventListener("input", actualizarPDF);
+direccion.addEventListener("input", actualizarPDF);
+servicio.addEventListener("input", actualizarPDF);
+ubicacion.addEventListener("input",actualizarPDF);
 
+duracion.addEventListener(
+    "input",
+    actualizarPDF
+);
+
+responsable.addEventListener(
+    "input",
+    actualizarPDF
+);
 addRow.addEventListener('click', agregarFila);
 btnDescargar.addEventListener("click", descargarPDF);
 
@@ -98,6 +125,17 @@ function actualizarPDF() {
     document.getElementById('pdfCliente').textContent = cliente.value || '-';
     document.getElementById('pdfEmpresa').textContent = empresa.value || '-';
     document.getElementById('pdfProyecto').textContent = proyecto.value || '-';
+    document.getElementById("pdfClienteCargo").textContent =
+    cargo.value || "-";
+
+    document.getElementById("pdfClienteRFC").textContent = rfcCliente.value || "-";
+    document.getElementById("pdfClienteCorreo").textContent = email.value || "-";
+    document.getElementById("pdfClienteTelefono").textContent = telefono.value || "-";
+    document.getElementById("pdfClienteDireccion").textContent = direccion.value || "-";
+    document.getElementById("pdfServicio").textContent = servicio.value || "-";
+    document.getElementById("pdfUbicacion").textContent = ubicacion.value || "-";
+    document.getElementById("pdfDuracion").textContent = duracion.value || "-";
+    document.getElementById("pdfResponsable").textContent = responsable.value || "-";
 
     if (fecha.value) {
         const f = new Date(fecha.value);
@@ -235,25 +273,60 @@ function resetFolios() {
 // DESCARGAR PDF
 // ======================================
 
-function descargarPDF() {
-    // CORRECCIÓN: Seleccionamos el documento A4, no el panel de vista previa entero.
-    const elemento = document.querySelector(".document-a4"); 
-    const folio = document.getElementById("pdfFolio").textContent;
+async function descargarPDF() {
 
-    const opciones = {
-        margin: 0,
-        filename: `${folio}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { 
-            scale: 2, // 2 es suficiente para excelente calidad y menor peso
-            useCORS: true,
-            scrollY: 0
-        },
-        pagebreak: { mode: ["css", "legacy"] },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    };
+    const folio =
+        document.getElementById("pdfFolio")
+        .textContent;
 
-    html2pdf().set(opciones).from(elemento).save();
+    const paginas = [
+        document.getElementById("executiveProposal"),
+        document.getElementById("technicalAnnex")
+    ];
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4"
+    });
+
+    for (let i = 0; i < paginas.length; i++) {
+
+        const canvas =
+            await html2canvas(paginas[i], {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            });
+
+        const img =
+            canvas.toDataURL(
+                "image/jpeg",
+                1
+            );
+
+        const width = 210;
+        const height =
+            (canvas.height * width)
+            / canvas.width;
+
+        if (i > 0) {
+            pdf.addPage();
+        }
+
+        pdf.addImage(
+            img,
+            "JPEG",
+            0,
+            0,
+            width,
+            height
+        );
+    }
+
+    pdf.save(`${folio}.pdf`);
 }
 
 // ======================================

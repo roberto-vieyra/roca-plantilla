@@ -58,6 +58,67 @@
                     <input type="date" id="fecha">
                 </div>
 
+                <div>
+                   <label>Cargo</label>
+                   <input type="text" id="cargo">
+                </div>
+
+<div>
+    <label>RFC</label>
+    <input type="text" id="rfcCliente">
+</div>
+
+<div>
+    <label>Email</label>
+    <input type="email" id="email">
+</div>
+
+<div>
+    <label>Teléfono</label>
+    <input type="text" id="telefono">
+</div>
+
+<div class="full-width">
+    <label>Dirección</label>
+    <textarea id="direccion"></textarea>
+</div>
+
+<div>
+    <label>Servicio</label>
+    <input
+        type="text"
+        id="servicio"
+        value="Presupuesto Ejecutivo y Supervisión"
+    >
+</div>
+
+<div>
+    <label>Ubicación</label>
+    <input
+        type="text"
+        id="ubicacion"
+        value="Ciudad de México"
+    >
+</div>
+
+<div>
+    <label>Duración</label>
+    <input
+        type="text"
+        id="duracion"
+        value="10 días hábiles"
+    >
+</div>
+
+<div>
+    <label>Responsable</label>
+    <input
+        type="text"
+        id="responsable"
+        value="Ing. Roberto Vieyra Sánchez"
+    >
+</div>
+
             </div>
 
         </div>
@@ -225,42 +286,42 @@
 
             <ul class="info-list">
 
-                <li>
-                    <strong>Empresa:</strong>
-                    <span id="pdfEmpresa">
-                        -
-                    </span>
-                </li>
+    <li>
+        <strong>Empresa:</strong>
+        <span id="pdfEmpresa">-</span>
+    </li>
 
-                <li>
-                    <strong>Atención:</strong>
-                    <span id="pdfCliente">
-                        -
-                    </span>
-                </li>
+    <li>
+        <strong>Atención:</strong>
+        <span id="pdfCliente">-</span>
+    </li>
 
-                <li>
-                    <strong>Email:</strong>
-                    <span id="pdfClienteCorreo">
-                        -
-                    </span>
-                </li>
+    <li>
+        <strong>Cargo:</strong>
+        <span id="pdfClienteCargo">-</span>
+    </li>
 
-                <li>
-                    <strong>Teléfono:</strong>
-                    <span id="pdfClienteTelefono">
-                        -
-                    </span>
-                </li>
+    <li>
+        <strong>RFC:</strong>
+        <span id="pdfClienteRFC">-</span>
+    </li>
 
-                <li>
-                    <strong>Dirección:</strong>
-                    <span id="pdfClienteDireccion">
-                        -
-                    </span>
-                </li>
+    <li>
+        <strong>Email:</strong>
+        <span id="pdfClienteCorreo">-</span>
+    </li>
 
-            </ul>
+    <li>
+        <strong>Teléfono:</strong>
+        <span id="pdfClienteTelefono">-</span>
+    </li>
+
+    <li>
+        <strong>Dirección:</strong>
+        <span id="pdfClienteDireccion">-</span>
+    </li>
+
+</ul>
 
         </div>
 
@@ -285,7 +346,9 @@
 
                 <li>
                     <strong>Servicio:</strong>
-                    Presupuesto Ejecutivo y Supervisión
+    <span id="pdfServicio">
+        Presupuesto Ejecutivo y Supervisión
+    </span>
                 </li>
 
                 <li>
@@ -304,7 +367,9 @@
 
                 <li>
                     <strong>Responsable:</strong>
+                    <span id="pdfResponsable">
                     Ing. Roberto Vieyra Sánchez
+                    </span>
                 </li>
 
             </ul>
@@ -455,7 +520,7 @@
                     </div>
 
                     <div class="title">
-                        Director General
+                        Coordinador de Proyectos y Presupuestos
                     </div>
 
                     <div class="title">
@@ -570,6 +635,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="app.js"></script>
 
 </body>
